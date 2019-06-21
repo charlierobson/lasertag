@@ -17,7 +17,7 @@ GameConfig gameConfig;
 
 void setup()
 {
-  if (gameConfig.REFEREE_GUN) {
+  if (gameConfig.REFEREEGUN) {
     gun = new RefereeGun(gameConfig);
   } else {
     gun = new PlayerGun(gameConfig);

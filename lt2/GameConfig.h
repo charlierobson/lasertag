@@ -1,7 +1,8 @@
 #ifndef __GAMECONFIG_H
 #define __GAMECONFIG_H
 
-// this should be all you change when compiling for different guns/games
+// this file should be all you need to change when compiling for different guns/games
+
 
 enum GameState
 {
@@ -11,9 +12,22 @@ enum GameState
   OVER
 };
 
+enum Command
+{
+  // non-referee player
+  SHOT = 1,
+
+  // referee commands
+  RESET,
+  REVIVE,
+  ADMINKILL,
+  GIVEAMMO
+};
+
+
 typedef struct
 {
-  const bool REFEREE_GUN = true;      // a referee gun has the power to affect players: reset, heal, admin kill etc 
+  const bool REFEREEGUN = true;      // a referee gun has the power to affect players: reset, heal, admin kill etc 
 
   const int TEAMID = 1;               // data transmitted by gun to identify player.
   const int PLAYERID = 1;  
