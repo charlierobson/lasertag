@@ -57,6 +57,7 @@ protected:
     pinMode(IRLEDPIN, INPUT);
     delayMicroseconds(600); // shorten this?
 
+    // command, payload and parity
     for (int i = 0; i < 16; ++i) {
       int pulseLen = ordnanceBits[i] * 600;
       pinMode(IRLEDPIN, OUTPUT);
@@ -73,9 +74,9 @@ protected:
     int oneBits = 0;
 
     // form the shot payload from a 6 bit command and 9 bit payload with a parity check
-    // the payload contains a stream of 16 * 600us pulse lengths where:
-    // 2 represents a '1' bit, of 2 * 600us pulses
-    // 1 represents a '0' bit, of 1 * 600us pulse
+    // the payload contains a stream of 16 * 600us pulse lengths where a value of:
+    //   2  represents a '1' bit, of 2 * 600us pulses
+    //   1  represents a '0' bit, of 1 * 600us pulse
 
     uint16_t shot = (cmd & 63) << 10 | (payload & 511) << 1;
 
