@@ -24,6 +24,8 @@ void setup()
   }
 
   gameConfig.state = RESETTING;
+
+  Serial.begin(115200);
 }
 
 
