@@ -1,38 +1,34 @@
+
+// go here to change the setup for the game/gun you're compiling for
+#include "GameConfig.h"
+
 #include "Gun.h"
+#include "PlayerGun.h"
+#include "RefereeGun.h"
+
 #include "Receiver.h"
 
 Gun* gun;
 Receiver* receiver;
 
-enum GameState
+
+GameConfig gameConfig;
+
+
+void setup()
 {
-  RESETTING,
-  STARTING,
-  RUNNING,
-  OVER
-};
+  if (gameConfig.REFEREE_GUN) {
+    gun = new RefereeGun(gameConfig);
+  } else {
+    gun = new PlayerGun(gameConfig);
+  }
 
-
-struct GameConfig
-{
-  const int TEAMID = 1;
-  const int PLAYERID = 1;
-  const int CLIPSIZE = 20;
-  const int LIVES = 3;
-
-  int lives;
-
-  GameState state;
-} gameConfig;
-
-
-void setup() {
-  gun = new Gun(gameConfig.CLIPSIZE);
   gameConfig.state = RESETTING;
 }
 
 
-void loop() {
+void loop()
+{
   switch (gameConfig.state) {
     case RESETTING:
       gun->begin();

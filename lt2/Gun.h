@@ -1,15 +1,18 @@
+#ifndef __GUN_H
+#define __GUN_H
+
 class Gun
 {
-private:
+protected:
   int _clipSize;
   int _ammoRemaining;
   bool _lastTriggerPinActive;
 
   const int PIN_TRIGGER = 4;
-  
+
 public:
-  Gun(int clipSize) :
-      _clipSize(clipSize)
+  Gun(GameConfig& gameConfig) :
+      _clipSize(gameConfig.CLIPSIZE)
   {
   }
 
@@ -20,14 +23,10 @@ public:
     _lastTriggerPinActive = false;
   }
 
-  void update() {
-    if (!_ammoRemaining) return;
-    if (!triggerPulled()) return;
+  // gun subclasses must supply this function
+  virtual void update() = 0;
 
-    fire();
-  }
-
-private:
+protected:
   bool triggerPulled() {
     bool triggerPinActive = digitalRead(PIN_TRIGGER) == LOW;
     bool triggered = triggerPinActive && !_lastTriggerPinActive;
@@ -42,3 +41,5 @@ private:
     --_ammoRemaining;
   }
 };
+
+#endif
