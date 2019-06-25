@@ -12,3 +12,4 @@
 
 [DIY gun guide](http://www.lasertag.co.uk/PDF_files/sgconst.pdf)
 
+[Audio using DDS](https://hackaday.com/2016/02/12/embed-with-elliot-audio-playback-with-direct-digital-synthesis/)
