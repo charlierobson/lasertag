@@ -48,12 +48,9 @@ Generation of 38khz signal is handed off to hardware. Timer 2 is used to toggle 
 
 [38khz pwm using timer hardware](https://forum.arduino.cc/index.php?topic=102430.msg773556#msg773556)
 
-[WS28x LEDS aren't so picky, really](https://wp.josh.com/2014/05/13/ws2812-neopixels-are-not-so-finicky-once-you-get-to-know-them/)
-[WS2812 code](https://github.com/bigjosh/SimpleNeoPixelDemo)
+[WS28x LEDS aren't so picky, really](https://wp.josh.com/2014/05/13/ws2812-neopixels-are-not-so-finicky-once-you-get-to-know-them/), [WS2812 code](https://github.com/bigjosh/SimpleNeoPixelDemo)
 
 
-[Lense thoughts 1](http://webcache.googleusercontent.com/search?q=cache:d14Z821idtkJ:www.lasertagparts.com/mtoptics.htm+&cd=1&hl=en&ct=clnk&gl=uk)
-
-[Lense thoughts 2](http://webcache.googleusercontent.com/search?q=cache:e1SMQ_9_ErMJ:alumnus.caltech.edu/~leif/infratag/lens_choice.html+&cd=3&hl=en&ct=clnk&gl=uk)
+[Lense thoughts 1](http://webcache.googleusercontent.com/search?q=cache:d14Z821idtkJ:www.lasertagparts.com/mtoptics.htm+&cd=1&hl=en&ct=clnk&gl=uk), [2](http://webcache.googleusercontent.com/search?q=cache:e1SMQ_9_ErMJ:alumnus.caltech.edu/~leif/infratag/lens_choice.html+&cd=3&hl=en&ct=clnk&gl=uk)
 
 [DIY gun guide](http://www.lasertag.co.uk/PDF_files/sgconst.pdf)
