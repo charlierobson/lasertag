@@ -48,6 +48,8 @@ Generation of 38khz signal is handed off to hardware. Timer 2 is used to toggle 
 
 [38khz pwm using timer hardware](https://forum.arduino.cc/index.php?topic=102430.msg773556#msg773556)
 
+[Bit-banging WS2812s](https://www.instructables.com/id/Bitbanging-step-by-step-Arduino-control-of-WS2811-/)
+
 [Lense thoughts 1](http://webcache.googleusercontent.com/search?q=cache:d14Z821idtkJ:www.lasertagparts.com/mtoptics.htm+&cd=1&hl=en&ct=clnk&gl=uk)
 
 [Lense thoughts 2](http://webcache.googleusercontent.com/search?q=cache:e1SMQ_9_ErMJ:alumnus.caltech.edu/~leif/infratag/lens_choice.html+&cd=3&hl=en&ct=clnk&gl=uk)
