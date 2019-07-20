@@ -2,7 +2,7 @@
 volatile int head = 0;
 volatile int tail = 0;
 uint16_t ringBuffer[64];
-
+extern unsigned long ledOffTime;
 
 bool dataPresent() {
   return head != tail;
@@ -46,22 +46,28 @@ class Receiver
     bool detectedHit() {
       if (dataCount() < 16) return false;
 
-      // pop the header - should be > 4000 
-      pop();
+      // pop the header - should be > 4000
+      int header = pop();
+//        Serial.print("header ");
+//        Serial.println(header, DEC);
 
       int oneBits = 0;
       uint16_t data = 0;
 
       for (int i = 0; i < 15; ++i) {
         data <<= 1;
-        if (pop() > 2000) {
+        int v = pop();
+//        Serial.println(v, DEC);
+        if (v > 2000) {
           data |= 1;
           ++oneBits;
         }
       }
 
       int parity = pop() > 2000 ? 1 : 0;
-      
+//        Serial.print("parity: ");
+//        Serial.println(parity, DEC);
+
       if ((oneBits & 1) ^ parity == 1) return false;
       
       uint16_t command = data >> 9;
@@ -74,6 +80,8 @@ class Receiver
         Serial.print(player, DEC);
         Serial.print(" of team ");
         Serial.println(team, DEC);
+        digitalWrite(5, HIGH);
+        ledOffTime = millis() + 1000;
       }
 
       return true;

@@ -14,6 +14,7 @@ Receiver* receiver;
 
 GameConfig gameConfig;
 
+unsigned long ledOffTime = 0;
 
 void setup()
 {
@@ -25,12 +26,21 @@ void setup()
 
   gameConfig.state = RESETTING;
 
+  pinMode(5,OUTPUT);
+  digitalWrite(5,LOW);
+  
   Serial.begin(115200);
+  delay(1000);
+  Serial.println("AVR LASERTAG");
 }
 
 
 void loop()
 {
+  if (ledOffTime != 0 && millis() > ledOffTime) {
+    digitalWrite(5,LOW);
+    ledOffTime = 0;
+  }
   switch (gameConfig.state) {
     case RESETTING:
       gun->begin();
