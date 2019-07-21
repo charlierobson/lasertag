@@ -1,7 +1,7 @@
-
 volatile int head = 0;
 volatile int tail = 0;
 uint16_t ringBuffer[64];
+
 extern unsigned long ledOffTime;
 
 bool dataPresent() {
@@ -44,34 +44,11 @@ class Receiver
     }
 
     bool detectedHit() {
-      if (dataCount() < 16) return false;
+      if (!dataPresent()) return false;
 
-      // pop the header - should be > 4000
-      int header = pop();
-//        Serial.print("header ");
-//        Serial.println(header, DEC);
-
-      int oneBits = 0;
-      uint16_t data = 0;
-
-      for (int i = 0; i < 15; ++i) {
-        data <<= 1;
-        int v = pop();
-//        Serial.println(v, DEC);
-        if (v > 2000) {
-          data |= 1;
-          ++oneBits;
-        }
-      }
-
-      int parity = pop() > 2000 ? 1 : 0;
-//        Serial.print("parity: ");
-//        Serial.println(parity, DEC);
-
-      if ((oneBits & 1) ^ parity == 1) return false;
-      
-      uint16_t command = data >> 9;
-      uint16_t payload = data & 511;
+      uint16_t data = pop();
+      uint16_t command = data >> 10;
+      uint16_t payload = (data & 1023) >> 1;
 
       if (command == SHOT) {
         uint16_t team = payload >> 4;
@@ -81,12 +58,16 @@ class Receiver
         Serial.print(" of team ");
         Serial.println(team, DEC);
         digitalWrite(5, HIGH);
-        ledOffTime = millis() + 1000;
+        ledOffTime = millis() + 250;
       }
 
       return true;
     }
 };
+
+volatile uint16_t receivedValue;
+volatile int receivedBits;
+volatile int oneBits;
 
 void irIsr() {
   if (digitalRead(Receiver::IRRECEIVERPIN) == LOW) {
@@ -94,6 +75,26 @@ void irIsr() {
     return;
   }
 
-  ringBuffer[head] = TCNT1;
-  head = (head + 1) & 63;
+  uint16_t pulseLength = TCNT1;
+  uint16_t rxBit = 0;
+
+  if (pulseLength > 4000) {
+    receivedValue = 0;
+    receivedBits = 0;
+    oneBits = 0;
+    return;
+  }
+  else if (pulseLength > 2000) {
+    rxBit = 1;
+    ++oneBits;
+  }
+
+  receivedValue = (receivedValue << 1) | rxBit;
+  ++receivedBits;
+  if (receivedBits == 16) {
+    if ((oneBits & 1) == 0) {
+      ringBuffer[head] = receivedValue;
+      head = (head + 1) & 63;
+    }
+  }
 }
