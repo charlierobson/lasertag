@@ -1,12 +1,14 @@
 #ifndef __GUN_H
 #define __GUN_H
 
+extern unsigned long ledOffTime;
+
 class Gun
 {
 protected:
   int _clipSize;
   int _ammoRemaining;
-  bool _lastTriggerPinActive;
+  uint16_t _triggerImpulse;
 
   const int IRLEDPIN = 11;
   const int TRIGGERPIN = 4;
@@ -24,7 +26,7 @@ public:
     pinMode(TRIGGERPIN, INPUT_PULLUP);
 
     _ammoRemaining = _clipSize;
-    _lastTriggerPinActive = false;
+    _triggerImpulse = 0;
 
     // we toggle this pin between input and output to control
     // transmission of the 38khz IR pulses
@@ -41,14 +43,13 @@ public:
   virtual void update() = 0;
 
 protected:
-  bool triggerPulled() {
-    bool triggerPinActive = digitalRead(TRIGGERPIN) == LOW;
-    bool triggered = triggerPinActive && !_lastTriggerPinActive;
+    bool triggerPulled() {
+      _triggerImpulse <<= 1;
+      if (digitalRead(TRIGGERPIN) == LOW)
+        _triggerImpulse |= 1;
 
-    _lastTriggerPinActive = triggerPinActive;
-
-    return triggered;
-  }
+      return _triggerImpulse == 0x7fff;
+    }
 
   void fire(char* ordnanceBits) {
     // 2400us start bit
@@ -65,8 +66,12 @@ protected:
       pinMode(IRLEDPIN, INPUT);
       delayMicroseconds(600);
     }
+
+    ledOffTime = millis() + 100;
+    digitalWrite(5,HIGH);
+    Serial.println("bang!");
  
-    --_ammoRemaining;
+//    --_ammoRemaining;
   }
 
   uint16_t createShotBitstream(int cmd, int payload, char* destBuffer) {
