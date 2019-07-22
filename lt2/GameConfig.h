@@ -1,8 +1,6 @@
-#ifndef __GAMECONFIG_H
-#define __GAMECONFIG_H
+#pragma once
 
 // this file should be all you need to change when compiling for different guns/games
-
 
 enum GameState
 {
@@ -33,12 +31,10 @@ typedef struct
   const int PLAYERID = 1;  
 
   const int CLIPSIZE = 20;            // gun's clip size, shots available to it per game
-  const int LIVES = 3;                // lives per game
+  const int LIVESPERGAME = 3;
 
   int lives;
 
   GameState state;
 }
 GameConfig;
-
-#endif

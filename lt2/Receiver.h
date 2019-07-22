@@ -1,6 +1,7 @@
-#include "timerMacros.h"
-#include "RingBuffer.h"
+#pragma once
 
+#include "TimerMacros.h"
+#include "RingBuffer.h"
 
 // forward declarations
 
@@ -60,13 +61,13 @@ class Receiver
       uint16_t pulseLength = TIMER_COUNT;
       uint16_t rxBit = 0;
 
-      if (pulseLength > 4000) {
+      if (pulseLength > HDRPULSELEN) {
         _receivedValue = 0;
         _receivedBits = 0;
         _oneBits = 0;
         return;
       }
-      else if (pulseLength > 2000) {
+      else if (pulseLength > ONEPULSELEN) {
         rxBit = 1;
         ++_oneBits;
       }
@@ -88,6 +89,15 @@ class Receiver
     volatile int _oneBits;
 
     RingBuffer* _ringBuffer;
+
+    #ifdef ESP32
+    hw_timer_t* _timer;
+    const int HDRPULSELEN = 2000;
+    const int ONEPULSELEN = 100;
+    #else
+    const int HDRPULSELEN = 4000;
+    const int ONEPULSELEN = 2000;
+    #endif
 };
 
 void irIsr() {

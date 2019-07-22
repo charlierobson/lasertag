@@ -1,26 +1,26 @@
-#ifndef __GUN_H
-#define __GUN_H
+#pragma once
 
-#include "timerMacros.h"
+#include "TimerMacros.h"
+#include "PWMMacros.h"
 
 
 class Gun
 {
   public:
-    Gun(GameConfig& gameConfig) :
-      _clipSize(gameConfig.CLIPSIZE)
+    Gun(GameConfig& gameConfig, int triggerPin) :
+      _clipSize(gameConfig.CLIPSIZE),
+      _triggerPin(triggerPin)
     {
       createShotBitstream(SHOT, (gameConfig.TEAMID & 3) << 4 | gameConfig.PLAYERID & 15, _shotBits);
     }
 
     void begin() {
-      pinMode(TRIGGERPIN, INPUT_PULLUP);
+      pinMode(_triggerPin, INPUT_PULLUP);
 
       _ammoRemaining = _clipSize;
       _triggerImpulse = 0;
 
-      pwmEnable(false);
-
+      PWM_DISABLE;
       TIMER_INITPWM;
     }
 
@@ -30,7 +30,7 @@ class Gun
   protected:
     bool triggerPulled() {
       _triggerImpulse <<= 1;
-      if (digitalRead(TRIGGERPIN) == LOW)
+      if (digitalRead(_triggerPin) == LOW)
         _triggerImpulse |= 1;
 
       return _triggerImpulse == 0x7fff;
@@ -38,17 +38,17 @@ class Gun
 
     void fire(char* ordnanceBits) {
       // 2400us start bit
-      pwmEnable(true);
+      PWM_ENABLE;
       delayMicroseconds(2400);
-      pwmEnable(false);
+      PWM_DISABLE;
       delayMicroseconds(600); // shorten this?
 
       // command, payload and parity
       for (int i = 0; i < 16; ++i) {
         int pulseLen = ordnanceBits[i] * 600;
-        pwmEnable(true);
+        PWM_ENABLE;
         delayMicroseconds(pulseLen);
-        pwmEnable(false);
+        PWM_DISABLE;
         delayMicroseconds(600);
       }
 
@@ -84,25 +84,7 @@ class Gun
     int _clipSize;
     int _ammoRemaining;
     uint16_t _triggerImpulse;
+    int _triggerPin;
 
     char _shotBits[16];
-
-    const int IRLEDPIN = 11;
-    const int TRIGGERPIN = 4;
-
-#ifdef ESP32
-
-    void pwmEnable(bool on) {
-    }
-
-#else
-
-    void pwmEnable(bool on) {
-      if (on) pinMode(IRLEDPIN, OUTPUT);
-      else    pinMode(IRLEDPIN, INPUT);
-    }
-
-#endif
 };
-
-#endif

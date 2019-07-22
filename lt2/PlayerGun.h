@@ -1,8 +1,9 @@
+#pragma once
 
 class PlayerGun : public Gun
 {
 public:
-  PlayerGun(GameConfig& gameConfig) : Gun(gameConfig) {
+  PlayerGun(GameConfig& gameConfig, int triggerPin) : Gun(gameConfig, triggerPin) {
   }
 
   void update() {
