@@ -1,52 +1,39 @@
-volatile int head = 0;
-volatile int tail = 0;
-uint16_t ringBuffer[64];
+#include "timerMacros.h"
+#include "RingBuffer.h"
 
-extern unsigned long ledOffTime;
 
-bool dataPresent() {
-  return head != tail;
-}
+// forward declarations
 
-int dataCount() {
-  int entries = head - tail;
-  if (entries < 0) entries += 64;
-  return entries;
-}
+extern void indicatorOn(unsigned int duration);
 
-uint16_t pop() {
-  uint16_t val = ringBuffer[tail];
-  tail = (tail + 1) & 63;
-  return val;
-}
-
+class Receiver* iamReceiver;
 void irIsr();
+
+
+// IR receiver class
 
 class Receiver
 {
   public:
-    static const int IRRECEIVERPIN = 3;
-
-    Receiver() {
+    Receiver(int receiverPin) :
+      _receiverPin(receiverPin) {
+      _ringBuffer = new RingBuffer();
     }
 
     void begin() {
-      attachInterrupt(digitalPinToInterrupt(IRRECEIVERPIN), irIsr, CHANGE);
-
-      // initialise Timer1, prescaler 8
-      TCCR1A = 0;
-      TCCR1B = 0;
-      TCCR1B |= (1 << CS11);
-      TCNT1 = 0;
+      iamReceiver = this;
+      attachInterrupt(digitalPinToInterrupt(_receiverPin), irIsr, CHANGE);
+      TIMER_INIT;
     }
 
     void update() {
     }
 
     bool detectedHit() {
-      if (!dataPresent()) return false;
+      if (!_ringBuffer->dataPresent()) return false;
 
-      uint16_t data = pop();
+      uint16_t data = _ringBuffer->pop();
+
       uint16_t command = data >> 10;
       uint16_t payload = (data & 1023) >> 1;
 
@@ -57,44 +44,52 @@ class Receiver
         Serial.print(player, DEC);
         Serial.print(" of team ");
         Serial.println(team, DEC);
-        digitalWrite(5, HIGH);
-        ledOffTime = millis() + 250;
+
+        indicatorOn(250);
       }
 
       return true;
     }
+
+    void handleInterrupt() {
+      if (digitalRead(_receiverPin) == LOW) {
+        TIMER_RESET;
+        return;
+      }
+
+      uint16_t pulseLength = TIMER_COUNT;
+      uint16_t rxBit = 0;
+
+      if (pulseLength > 4000) {
+        _receivedValue = 0;
+        _receivedBits = 0;
+        _oneBits = 0;
+        return;
+      }
+      else if (pulseLength > 2000) {
+        rxBit = 1;
+        ++_oneBits;
+      }
+
+      _receivedValue = (_receivedValue << 1) | rxBit;
+      ++_receivedBits;
+      if (_receivedBits == 16) {
+        if ((_oneBits & 1) == 0) {
+          _ringBuffer->push(_receivedValue);
+        }
+      }
+    }
+
+  private:
+    int _receiverPin;
+
+    volatile uint16_t _receivedValue;
+    volatile int _receivedBits;
+    volatile int _oneBits;
+
+    RingBuffer* _ringBuffer;
 };
 
-volatile uint16_t receivedValue;
-volatile int receivedBits;
-volatile int oneBits;
-
 void irIsr() {
-  if (digitalRead(Receiver::IRRECEIVERPIN) == LOW) {
-    TCNT1 = 0;
-    return;
-  }
-
-  uint16_t pulseLength = TCNT1;
-  uint16_t rxBit = 0;
-
-  if (pulseLength > 4000) {
-    receivedValue = 0;
-    receivedBits = 0;
-    oneBits = 0;
-    return;
-  }
-  else if (pulseLength > 2000) {
-    rxBit = 1;
-    ++oneBits;
-  }
-
-  receivedValue = (receivedValue << 1) | rxBit;
-  ++receivedBits;
-  if (receivedBits == 16) {
-    if ((oneBits & 1) == 0) {
-      ringBuffer[head] = receivedValue;
-      head = (head + 1) & 63;
-    }
-  }
+  iamReceiver->handleInterrupt();
 }

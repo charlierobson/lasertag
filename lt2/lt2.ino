@@ -11,10 +11,16 @@
 Gun* gun;
 Receiver* receiver;
 
-
 GameConfig gameConfig;
 
+
 unsigned long ledOffTime = 0;
+
+void indicatorOn(unsigned int duration) {
+    digitalWrite(5, HIGH);
+    ledOffTime = millis() + duration;
+}
+
 
 void setup()
 {
@@ -41,6 +47,7 @@ void loop()
     digitalWrite(5,LOW);
     ledOffTime = 0;
   }
+
   switch (gameConfig.state) {
     case RESETTING:
       gun->begin();

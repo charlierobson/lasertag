@@ -8,6 +8,6 @@ public:
   void update() {
     if (!_ammoRemaining) return;
     if (!triggerPulled()) return;
-    fire(shotBits);
+    fire(_shotBits);
   }
 };
