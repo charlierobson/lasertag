@@ -1,7 +1,7 @@
 # lasertag
 
 ### What
-Simple laser-tag style game implementation using hacked Namco G-con and Arduino.
+Simple laser-tag style game implementation using hacked Namco G-con and Arduino/ESP32.
 
 ### Why
 Why not.
@@ -9,13 +9,13 @@ Why not.
 ### How
 
 #### Shot detection
-TSOP38238 style IR receiver is attached to external interrupt pin. On change interrupt detects a falling or rising edge produced by the module's output pin. The signal is active low, and pulls its output to ground when a 38khz modulated signal is being detected. On falling edge timer 1 is reset to 0 where it counts up. On rising edge timer 1's value is stashed in a circular buffer. Because this happens in an interrupt we never miss a hit.
+TSOP38238 style IR receiver is attached to external interrupt pin. On change interrupt detects a falling or rising edge produced by the module's output pin. The signal is active low, and pulls its output to ground when a 38khz modulated signal is being detected. On falling edge timer 1 is reset to 0 where it counts up. Roughly speaking on deteting a rising edge timer 1's value is interpreted as a 1 or 0 and shifted into an accumulator. When 16 bits have been received the value is parity achecked and if it appears good then it is stashed in a circular buffer. Because this happens in an interrupt we never miss a hit.
 
-The buffer is checked every game loop and if it contains enough bits for a valid tag then the recevied data is evaluated. The bit fields of the command word are as follows:
+The buffer is checked every game loop and if it contains any tags then the received data is evaluated. The bit fields of the command word are as follows:
 
-| 16 |  15-10 | 9-1 | 0 |
+| 16-10 | 9-1 | 0 |
 |----|--------|-----|---|
-| start bit | command code | command data | parity check bit |
+| command code | command data | parity check bit |
 
 Parity is even. Bits are encoded similarly to 'miles tag' standard. Multiples of 600us pulses are transmitted by the tagger. The length of a pulse denotes its value. 4x600us for the start bit, 2x600us for a '1' bit and 1x600us for a '0' bit. Signal is RTZ, with a 600us high period separating the bits.
 
@@ -34,7 +34,7 @@ Parity: 1
 
 #### Shot transmission
 
-Generation of 38khz signal is handed off to hardware. Timer 2 is used to toggle an output pin on hardware timer value match producing a 50% PWM signal at the pin. The PWM runs continuously and is modulated by setting the direction of the output pin. When direction is OUT then the signal is output to the IR LED. When it's IN the LED is off. 
+Generation of 38khz signal is handed off to hardware. On AVR timer 2 is used to toggle an output pin on hardware timer value match producing a 50% PWM signal at the pin. The PWM runs continuously and is modulated by setting the direction of the output pin. When direction is OUT then the signal is output to the IR LED. When it's IN the LED is off. 
 
 ---
 
