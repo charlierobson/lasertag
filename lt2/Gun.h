@@ -7,18 +7,15 @@
 class Gun
 {
   public:
-    Gun(GameConfig& gameConfig, int triggerPin) :
+    Gun(GameConfig& gameConfig, Trigger* trigger) :
       _clipSize(gameConfig.CLIPSIZE),
-      _triggerPin(triggerPin)
+      _trigger(trigger)
     {
       createShotBitstream(SHOT, (gameConfig.TEAMID & 3) << 4 | gameConfig.PLAYERID & 15, _shotBits);
     }
 
     void begin() {
-      pinMode(_triggerPin, INPUT_PULLUP);
-
       _ammoRemaining = _clipSize;
-      _triggerImpulse = 0;
 
       PWM_DISABLE;
       TIMER_INITPWM;
@@ -28,14 +25,6 @@ class Gun
     virtual void update() = 0;
 
   protected:
-    bool triggerPulled() {
-      _triggerImpulse <<= 1;
-      if (digitalRead(_triggerPin) == LOW)
-        _triggerImpulse |= 1;
-
-      return _triggerImpulse == 0x7fff;
-    }
-
     void fire(char* ordnanceBits) {
       // 2400us start bit
       PWM_ENABLE;
@@ -83,8 +72,8 @@ class Gun
 
     int _clipSize;
     int _ammoRemaining;
-    uint16_t _triggerImpulse;
-    int _triggerPin;
+
+    Trigger* _trigger;
 
     char _shotBits[16];
 };

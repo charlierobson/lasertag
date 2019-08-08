@@ -2,6 +2,8 @@
 // go here to change the setup for the game/gun you're compiling for
 #include "GameConfig.h"
 
+#include "Trigger.h"
+
 #include "Gun.h"
 #include "PlayerGun.h"
 #include "RefereeGun.h"
@@ -11,11 +13,14 @@
 Gun* gun;
 Receiver* receiver;
 
+Trigger* triggers[2];
+
 GameConfig gameConfig;
 
 #define PIN_TRIGGER 4
 #define PIN_IR_RECIEVER 3
 #define PIN_NOTIFY_LED 5
+#define PIN_LBUTTON 6
 
 unsigned long ledOffTime = 0;
 
@@ -27,10 +32,13 @@ void indicatorOn(unsigned int duration) {
 
 void setup()
 {
+  triggers[0] = new Trigger(PIN_TRIGGER);
+  triggers[1] = new Trigger(PIN_LBUTTON);
+  
   if (gameConfig.REFEREEGUN) {
-    gun = new RefereeGun(gameConfig, PIN_TRIGGER);
+    gun = new RefereeGun(gameConfig, triggers[0]);
   } else {
-    gun = new PlayerGun(gameConfig, PIN_TRIGGER);
+    gun = new PlayerGun(gameConfig, triggers[0]);
   }
 
   receiver = new Receiver(PIN_IR_RECIEVER);
@@ -49,6 +57,13 @@ void setup()
 void loop()
 {
   static unsigned long lastUpdateTime = 0;
+
+  // peg update rate to once every 2 ms
+  while (millis() >> 1 != lastUpdateTime) {}
+  lastUpdateTime = millis() >> 1;
+
+  triggers[0]->update();
+  triggers[1]->update();
 
   if (ledOffTime != 0 && millis() > ledOffTime) {
     digitalWrite(PIN_NOTIFY_LED, LOW);
@@ -69,10 +84,6 @@ void loop()
       break;
 
     case RUNNING:
-      // peg update rate to once every 2 ms
-      while (millis() >> 1 != lastUpdateTime) {}
-      lastUpdateTime = millis() >> 1;
-
       gun->update();
       receiver->update();
 
