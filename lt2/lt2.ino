@@ -2,6 +2,8 @@
 // go here to change the setup for the game/gun you're compiling for
 #include "GameConfig.h"
 
+#include "Audio.h"
+
 #include "Trigger.h"
 
 #include "Gun.h"
@@ -16,6 +18,8 @@ Receiver* receiver;
 Trigger* triggers[2];
 
 GameConfig gameConfig;
+
+SFX sfx;
 
 #define PIN_TRIGGER 4
 #define PIN_IR_RECIEVER 3
@@ -44,6 +48,8 @@ void setup()
   receiver = new Receiver(PIN_IR_RECIEVER);
 
   gameConfig.state = RESETTING;
+
+  sfx.begin();
 
   pinMode(PIN_NOTIFY_LED, OUTPUT);
   digitalWrite(PIN_NOTIFY_LED, LOW);

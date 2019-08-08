@@ -3,6 +3,8 @@
 #include "TimerMacros.h"
 #include "PWMMacros.h"
 
+#include "Audio.h"
+extern SFX sfx;
 
 class Gun
 {
@@ -26,6 +28,8 @@ class Gun
 
   protected:
     void fire(char* ordnanceBits) {
+      sfx.playSound(0,0);
+      
       // 2400us start bit
       PWM_ENABLE;
       delayMicroseconds(2400);
