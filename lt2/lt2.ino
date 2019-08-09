@@ -12,13 +12,11 @@
 
 Gun* gun;
 Receiver* receiver;
-
-Trigger* triggers[2];
+Trigger* gunTrigger;
+Trigger* reloadTrigger;
+SFX* sfx;
 
 GameConfig gameConfig;
-
-SFX sfx;
-
 
 unsigned long ledOffTime = 0;
 
@@ -30,20 +28,21 @@ void indicatorOn(unsigned int duration) {
 
 void setup()
 {
-  triggers[0] = new Trigger(PIN_TRIGGER);
-  triggers[1] = new Trigger(PIN_RBUTTON);
+  gunTrigger = new Trigger(PIN_TRIGGER);
+  reloadTrigger = new Trigger(PIN_RBUTTON);
   
   if (gameConfig.REFEREEGUN) {
-    gun = new RefereeGun(gameConfig, triggers[0], PIN_IR_TRANSMITTER);
+    gun = new RefereeGun(gameConfig, PIN_IR_TRANSMITTER);
   } else {
-    gun = new PlayerGun(gameConfig, triggers[0], PIN_IR_TRANSMITTER);
+    gun = new PlayerGun(gameConfig, PIN_IR_TRANSMITTER);
   }
 
   receiver = new Receiver(PIN_IR_RECIEVER);
 
   gameConfig.state = RESETTING;
 
-  sfx.begin();
+  sfx = new SFX();
+  sfx->begin();
 
   pinMode(PIN_NOTIFY_LED, OUTPUT);
   digitalWrite(PIN_NOTIFY_LED, LOW);
@@ -56,14 +55,15 @@ void setup()
 
 void loop()
 {
-  static unsigned long lastUpdateTime = 0;
+  static unsigned long nextUpdateTime = 1;
 
-  // peg update rate to once every 2 ms
-  while (millis() >> 1 != lastUpdateTime) {}
-  lastUpdateTime = millis() >> 1;
+  while (millis() < nextUpdateTime) {
+    sfx->update();
+  }
+  nextUpdateTime += 5;
 
-  triggers[0]->update();
-  triggers[1]->update();
+  gunTrigger->update();
+  reloadTrigger->update();
 
   if (ledOffTime != 0 && millis() > ledOffTime) {
     digitalWrite(PIN_NOTIFY_LED, LOW);
@@ -77,6 +77,9 @@ void loop()
 
       gameConfig.lives = gameConfig.LIVESPERGAME;
       gameConfig.state = STARTING;
+
+      gameConfig.shotsRemaining = gameConfig.CLIPSIZE;
+      gameConfig.clipsRemaining = gameConfig.CLIPCOUNT;
       break;
 
     case STARTING:
@@ -84,9 +87,17 @@ void loop()
       break;
 
     case RUNNING:
-      gun->update();
-      receiver->update();
+      if (gunTrigger->state() == 2) {
+        if (gameConfig.shotsRemaining != 0) {
+          sfx->playSound(SFX_SHOT);
+          gun->update();
+          --gameConfig.shotsRemaining;
+        } else {
+          sfx->playSound(SFX_EMPTY);
+        }
+      }
 
+      receiver->update();
       if (receiver->detectedHit()) {
         --gameConfig.lives;
         if (!gameConfig.lives) {

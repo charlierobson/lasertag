@@ -1,11 +1,24 @@
 #pragma once
 
+unsigned char* samplePointers[8];
+unsigned int sampleLengths[8];
+
+#define SFX_SHOT 0
+#define SFX_EMPTY 1
+#define SFX_RELOAD 2
+#define SFX_NOPE 3
+
 #ifdef ESP32
 
 #include <esp32/ulp.h>
 #include <driver/rtc_io.h>
 #include <driver/dac.h>
 #include <soc/rtc.h>
+
+#include "sfx/sfx_shot.h"
+#include "sfx/sfx_empty.h"
+#include "sfx/sfx_reload.h"
+#include "sfx/sfx_nope.h"
 
 // THANKS BITLUNI!
 // https://github.com/bitluni/ULPSoundESP32/tree/master/ULPSoundMonoSamples
@@ -15,6 +28,14 @@ public:
     SFX() :
     _lastFilledWord(0),
     _sampleDataLen(0) {
+        samplePointers[SFX_SHOT] = sfx_shot_raw;
+        sampleLengths[SFX_SHOT] = sfx_shot_raw_len;
+        samplePointers[SFX_EMPTY] = sfx_empty_raw;
+        sampleLengths[SFX_EMPTY] = sfx_empty_raw_len;
+        samplePointers[SFX_RELOAD] = sfx_reload_raw;
+        sampleLengths[SFX_RELOAD] = sfx_reload_raw_len;
+        samplePointers[SFX_NOPE] = sfx_nope_raw;
+        sampleLengths[SFX_NOPE] = sfx_nope_raw_len;
     }
 
     void begin() {
@@ -99,9 +120,9 @@ public:
             delay(1);
     }
 
-    void playSound(unsigned char* sampleDataPtr, unsigned int sampleDataLen) {
-        _sampleDataPtr = sampleDataPtr;
-        _sampleDataLen = sampleDataLen;
+    void playSound(int soundID) {
+        _sampleDataPtr = samplePointers[soundID];
+        _sampleDataLen = sampleLengths[soundID];
     }
 
     void update() {

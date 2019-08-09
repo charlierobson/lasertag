@@ -30,10 +30,15 @@ typedef struct
   const int TEAMID = 1;               // data transmitted by gun to identify player.
   const int PLAYERID = 1;  
 
-  const int CLIPSIZE = 20;            // gun's clip size, shots available to it per game
   const int LIVESPERGAME = 3;
 
   int lives;
+
+  const int CLIPSIZE = 20;            // gun's clip size, shots available to it per game
+  const int CLIPCOUNT = 4;            // number of clips/reloads allowed
+
+  int shotsRemaining;
+  int clipsRemaining;
 
   GameState state;
 }

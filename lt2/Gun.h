@@ -3,12 +3,10 @@
 #include "TimerMacros.h"
 #include "PWMMacros.h"
 
-extern SFX sfx;
-
 class Gun
 {
   public:
-    Gun(GameConfig& gameConfig, Trigger* trigger, int irLEDPin) :
+    Gun(GameConfig& gameConfig, int irLEDPin) :
       _clipSize(gameConfig.CLIPSIZE),
       _trigger(trigger),
       _irLEDPin(irLEDPin)
@@ -17,8 +15,6 @@ class Gun
     }
 
     void begin() {
-      _ammoRemaining = _clipSize;
-
       PWM_INIT;
       PWM_DISABLE;
     }
@@ -28,8 +24,7 @@ class Gun
 
   protected:
     void fire(char* ordnanceBits) {
-      sfx.playSound(0,0);
-      
+
       // 2400us start bit
       PWM_ENABLE;
       delayMicroseconds(2400);
@@ -44,8 +39,6 @@ class Gun
         PWM_DISABLE;
         delayMicroseconds(600);
       }
-
-      //    --_ammoRemaining;
     }
 
     uint16_t createShotBitstream(int cmd, int payload, char* destBuffer) {
@@ -75,11 +68,6 @@ class Gun
     }
 
     int _irLEDPin;
-
-    int _clipSize;
-    int _ammoRemaining;
-
-    Trigger* _trigger;
 
     char _shotBits[16];
 };
