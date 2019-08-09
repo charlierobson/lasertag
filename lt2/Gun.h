@@ -6,12 +6,10 @@
 class Gun
 {
   public:
-    Gun(GameConfig& gameConfig, int irLEDPin) :
-      _clipSize(gameConfig.CLIPSIZE),
-      _trigger(trigger),
+    Gun(int irLEDPin, int team, int player) :
       _irLEDPin(irLEDPin)
     {
-      createShotBitstream(SHOT, (gameConfig.TEAMID & 3) << 4 | gameConfig.PLAYERID & 15, _shotBits);
+      createShotBitstream(SHOT, (team & 3) << 4 | player & 15, _shotBits);
     }
 
     void begin() {
@@ -20,7 +18,7 @@ class Gun
     }
 
     // gun subclasses must supply this function
-    virtual void update() = 0;
+    virtual void transmitShot(int shotType) = 0;
 
   protected:
     void fire(char* ordnanceBits) {

@@ -31,11 +31,7 @@ void setup()
   gunTrigger = new Trigger(PIN_TRIGGER);
   reloadTrigger = new Trigger(PIN_RBUTTON);
   
-  if (gameConfig.REFEREEGUN) {
-    gun = new RefereeGun(gameConfig, PIN_IR_TRANSMITTER);
-  } else {
-    gun = new PlayerGun(gameConfig, PIN_IR_TRANSMITTER);
-  }
+  gun = new PlayerGun(PIN_IR_TRANSMITTER, gameConfig.TEAMID, gameConfig.PLAYERID);
 
   receiver = new Receiver(PIN_IR_RECIEVER);
 
@@ -90,7 +86,7 @@ void loop()
       if (gunTrigger->state() == 2) {
         if (gameConfig.shotsRemaining != 0) {
           sfx->playSound(SFX_SHOT);
-          gun->update();
+          gun->transmitShot(0);
           --gameConfig.shotsRemaining;
         } else {
           sfx->playSound(SFX_EMPTY);

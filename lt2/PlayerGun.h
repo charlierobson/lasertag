@@ -3,10 +3,10 @@
 class PlayerGun : public Gun
 {
 public:
-  PlayerGun(GameConfig& gameConfig, int irLEDPin) : Gun(gameConfig, irLEDPin) {
+  PlayerGun(int irLEDPin, int team, int player) : Gun(irLEDPin, team, player) {
   }
 
-  void update() {
+  void transmitShot(int shotType) {
     fire(_shotBits);
   }
 };
