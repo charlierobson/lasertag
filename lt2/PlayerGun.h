@@ -3,7 +3,7 @@
 class PlayerGun : public Gun
 {
 public:
-  PlayerGun(GameConfig& gameConfig, Trigger* trigger) : Gun(gameConfig, trigger) {
+  PlayerGun(GameConfig& gameConfig, Trigger* trigger, int irLEDPin) : Gun(gameConfig, trigger, irLEDPin) {
   }
 
   void update() {

@@ -3,7 +3,7 @@
 class RefereeGun : public Gun
 {
 public:
-  RefereeGun(GameConfig& gameConfig, Trigger* trigger) : Gun(gameConfig, trigger) {
+  RefereeGun(GameConfig& gameConfig, Trigger* trigger, int irLEDPin) : Gun(gameConfig, trigger, irLEDPin) {
   }
 
   void update() {

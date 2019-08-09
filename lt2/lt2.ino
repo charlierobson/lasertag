@@ -1,15 +1,13 @@
 
 // go here to change the setup for the game/gun you're compiling for
 #include "GameConfig.h"
+#include "BoardConfig.h"
 
 #include "Audio.h"
-
 #include "Trigger.h"
-
 #include "Gun.h"
 #include "PlayerGun.h"
 #include "RefereeGun.h"
-
 #include "Receiver.h"
 
 Gun* gun;
@@ -21,10 +19,6 @@ GameConfig gameConfig;
 
 SFX sfx;
 
-#define PIN_TRIGGER 4
-#define PIN_IR_RECIEVER 3
-#define PIN_NOTIFY_LED 5
-#define PIN_LBUTTON 6
 
 unsigned long ledOffTime = 0;
 
@@ -37,12 +31,12 @@ void indicatorOn(unsigned int duration) {
 void setup()
 {
   triggers[0] = new Trigger(PIN_TRIGGER);
-  triggers[1] = new Trigger(PIN_LBUTTON);
+  triggers[1] = new Trigger(PIN_RBUTTON);
   
   if (gameConfig.REFEREEGUN) {
-    gun = new RefereeGun(gameConfig, triggers[0]);
+    gun = new RefereeGun(gameConfig, triggers[0], PIN_IR_TRANSMITTER);
   } else {
-    gun = new PlayerGun(gameConfig, triggers[0]);
+    gun = new PlayerGun(gameConfig, triggers[0], PIN_IR_TRANSMITTER);
   }
 
   receiver = new Receiver(PIN_IR_RECIEVER);

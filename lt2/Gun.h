@@ -3,15 +3,15 @@
 #include "TimerMacros.h"
 #include "PWMMacros.h"
 
-#include "Audio.h"
 extern SFX sfx;
 
 class Gun
 {
   public:
-    Gun(GameConfig& gameConfig, Trigger* trigger) :
+    Gun(GameConfig& gameConfig, Trigger* trigger, int irLEDPin) :
       _clipSize(gameConfig.CLIPSIZE),
-      _trigger(trigger)
+      _trigger(trigger),
+      _irLEDPin(irLEDPin)
     {
       createShotBitstream(SHOT, (gameConfig.TEAMID & 3) << 4 | gameConfig.PLAYERID & 15, _shotBits);
     }
@@ -19,8 +19,8 @@ class Gun
     void begin() {
       _ammoRemaining = _clipSize;
 
+      PWM_INIT;
       PWM_DISABLE;
-      TIMER_INITPWM;
     }
 
     // gun subclasses must supply this function
@@ -73,6 +73,8 @@ class Gun
       // parity calculation. always an even number of bits.
       *destBuffer = oneBits & 1 ? 2 : 1;
     }
+
+    int _irLEDPin;
 
     int _clipSize;
     int _ammoRemaining;

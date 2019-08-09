@@ -6,7 +6,6 @@
 #include <driver/rtc_io.h>
 #include <driver/dac.h>
 #include <soc/rtc.h>
-#include <math.h>
 
 // THANKS BITLUNI!
 // https://github.com/bitluni/ULPSoundESP32/tree/master/ULPSoundMonoSamples
