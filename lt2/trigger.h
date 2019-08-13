@@ -11,7 +11,7 @@ private:
 public:
     Trigger(int pinNum) : 
     _pinNum(pinNum),
-    _shiftreg(0),
+    _shiftreg(0xffff),
     _counts(0),
     _state(0) {
         pinMode(_pinNum, INPUT_PULLUP);
@@ -19,12 +19,12 @@ public:
 
     void update() {
         _shiftreg <<= 1;
-        _shiftreg |= digitalRead(_pinNum);
+        _shiftreg |= digitalRead(_pinNum) ? 1 : 0;
 
-        if (_shiftreg == 0) _state = 0; 
-        else if (_shiftreg == 0x7fff) _state = 1;
-        else if (_shiftreg == 0xffff) _state = 2;
-        else if (_shiftreg == 0x8000) _state = 3;
+        if (_shiftreg == 0xffff) _state = 0; 
+        else if (_shiftreg == 0x8000) _state = 1;
+        else if (_shiftreg == 0x0000) _state = 2;
+        else if (_shiftreg == 0x0001) _state = 3;
 
         if (_state == 2) {
             if (_counts != 0xffff) {
