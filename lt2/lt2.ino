@@ -30,15 +30,30 @@ void setup()
 {
   gunTrigger = new Trigger(PIN_TRIGGER);
   reloadTrigger = new Trigger(PIN_RBUTTON);
-  
+
+  // turn off the soft power switch and loop until the trigger is moved
+  pinMode(PIN_HARD_ON, OUTPUT);
+  digitalWrite(PIN_HARD_ON, LOW);
+  while(gunTrigger->state() == 0) {
+    delay(1);
+    gunTrigger->update();
+  }
+
+  // hold the power on
+  digitalWrite(PIN_HARD_ON, HIGH);
+
+  sfx = new SFX();
+  sfx->begin();
+
+  // play the welcome sound then flush the audio buffer to ensure there's no glitch
+  sfx->playSoundSync(SFX_HELLO);
+  sfx->flush();
+
   gun = new PlayerGun(PIN_IR_TRANSMITTER, gameConfig.TEAMID, gameConfig.PLAYERID);
 
   receiver = new Receiver(PIN_IR_RECIEVER);
 
   gameConfig.state = RESETTING;
-
-  sfx = new SFX();
-  sfx->begin();
 
   pinMode(PIN_NOTIFY_LED, OUTPUT);
   digitalWrite(PIN_NOTIFY_LED, LOW);
@@ -102,6 +117,12 @@ void loop()
         else {
           sfx->playSound(SFX_NOPE);
         }
+      }
+
+      if (reloadTrigger->timeHeld() > 400) {
+        // 2000ms/5
+        sfx->playSoundSync(SFX_SHUTTINGDOWN);
+        digitalWrite(PIN_HARD_ON, LOW);
       }
 
       receiver->update();
