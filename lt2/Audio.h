@@ -140,6 +140,13 @@ public:
         }
     }
 
+    void flush() {
+        for(int i = 0; i < 400; ++i) {
+            update();
+            delay(1);
+        }
+    }
+
     void update() {
         int currentSample = RTC_SLOW_MEM[indexAddress] & 0xffff;
         int currentWord = currentSample >> 1;
@@ -185,10 +192,13 @@ public:
     void begin() {
     }
 
-    void playSound(int sample)) {
+    void playSound(int sample) {
     }
 
     void playSoundSync(int sample) {
+    }
+
+    void flush() {
     }
 
     void update() {
