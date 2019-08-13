@@ -17,12 +17,12 @@ unsigned int sampleLengths[8];
 #include <driver/dac.h>
 #include <soc/rtc.h>
 
-#include "sfx/shot.h"
-#include "sfx/empty.h"
-#include "sfx/reload.h"
-#include "sfx/beep.h"
-#include "sfx/hello.h"
-#include "sfx/shuttingdown.h"
+#include "sfx/sfx_shot.h"
+#include "sfx/sfx_empty.h"
+#include "sfx/sfx_reload.h"
+#include "sfx/sfx_beep.h"
+#include "sfx/sfx_hello.h"
+#include "sfx/sfx_shuttingdown.h"
 
 // THANKS BITLUNI!
 // https://github.com/bitluni/ULPSoundESP32/tree/master/ULPSoundMonoSamples
@@ -32,18 +32,18 @@ public:
     SFX() :
     _lastFilledWord(0),
     _sampleDataLen(0) {
-        samplePointers[SFX_SHOT] = shot_raw;
+        samplePointers[SFX_SHOT] = (unsigned char*)shot_raw;
         sampleLengths[SFX_SHOT] = shot_raw_len;
-        samplePointers[SFX_EMPTY] = empty_raw;
+        samplePointers[SFX_EMPTY] = (unsigned char*)empty_raw;
         sampleLengths[SFX_EMPTY] = empty_raw_len;
-        samplePointers[SFX_RELOAD] = reload_raw;
+        samplePointers[SFX_RELOAD] = (unsigned char*)reload_raw;
         sampleLengths[SFX_RELOAD] = reload_raw_len;
-        samplePointers[SFX_NOPE] = beep_raw;
+        samplePointers[SFX_NOPE] = (unsigned char*)beep_raw;
         sampleLengths[SFX_NOPE] = beep_raw_len;
-        samplePointers[SFX_HELLO] = hello_raw;
+        samplePointers[SFX_HELLO] = (unsigned char*)hello_raw;
         sampleLengths[SFX_HELLO] = hello_raw_len;
-        samplePointers[SFX_SHUTTINGDOWN] = shuttingdown_raw;
-        sampleLengths[SFX_SHUTTINGDOWN] = shuttingdhown_raw_len;
+        samplePointers[SFX_SHUTTINGDOWN] = (unsigned char*)shuttingdown_raw;
+        sampleLengths[SFX_SHUTTINGDOWN] = shuttingdown_raw_len;
     }
 
     void begin() {
