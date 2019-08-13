@@ -34,8 +34,8 @@ typedef struct
 
   int lives;
 
-  const int CLIPSIZE = 20;            // gun's clip size, shots available to it per game
-  const int CLIPCOUNT = 4;            // number of clips/reloads allowed
+  const int CLIPSIZE = 5;            // gun's clip size, shots available to it per game
+  const int CLIPCOUNT = 2;            // number of clips/reloads allowed
 
   int shotsRemaining;
   int clipsRemaining;

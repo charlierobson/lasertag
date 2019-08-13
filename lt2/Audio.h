@@ -7,6 +7,8 @@ unsigned int sampleLengths[8];
 #define SFX_EMPTY 1
 #define SFX_RELOAD 2
 #define SFX_NOPE 3
+#define SFX_HELLO 3
+#define SFX_SHUTTINGDOWN 3
 
 #ifdef ESP32
 
@@ -15,10 +17,12 @@ unsigned int sampleLengths[8];
 #include <driver/dac.h>
 #include <soc/rtc.h>
 
-#include "sfx/sfx_shot.h"
-#include "sfx/sfx_empty.h"
-#include "sfx/sfx_reload.h"
-#include "sfx/sfx_nope.h"
+#include "sfx/shot.h"
+#include "sfx/empty.h"
+#include "sfx/reload.h"
+#include "sfx/beep.h"
+#include "sfx/hello.h"
+#include "sfx/shuttingdown.h"
 
 // THANKS BITLUNI!
 // https://github.com/bitluni/ULPSoundESP32/tree/master/ULPSoundMonoSamples
@@ -28,14 +32,18 @@ public:
     SFX() :
     _lastFilledWord(0),
     _sampleDataLen(0) {
-        samplePointers[SFX_SHOT] = sfx_shot_raw;
-        sampleLengths[SFX_SHOT] = sfx_shot_raw_len;
-        samplePointers[SFX_EMPTY] = sfx_empty_raw;
-        sampleLengths[SFX_EMPTY] = sfx_empty_raw_len;
-        samplePointers[SFX_RELOAD] = sfx_reload_raw;
-        sampleLengths[SFX_RELOAD] = sfx_reload_raw_len;
-        samplePointers[SFX_NOPE] = sfx_nope_raw;
-        sampleLengths[SFX_NOPE] = sfx_nope_raw_len;
+        samplePointers[SFX_SHOT] = shot_raw;
+        sampleLengths[SFX_SHOT] = shot_raw_len;
+        samplePointers[SFX_EMPTY] = empty_raw;
+        sampleLengths[SFX_EMPTY] = empty_raw_len;
+        samplePointers[SFX_RELOAD] = reload_raw;
+        sampleLengths[SFX_RELOAD] = reload_raw_len;
+        samplePointers[SFX_NOPE] = beep_raw;
+        sampleLengths[SFX_NOPE] = beep_raw_len;
+        samplePointers[SFX_HELLO] = hello_raw;
+        sampleLengths[SFX_HELLO] = hello_raw_len;
+        samplePointers[SFX_SHUTTINGDOWN] = shuttingdown_raw;
+        sampleLengths[SFX_SHUTTINGDOWN] = shuttingdhown_raw_len;
     }
 
     void begin() {
@@ -125,6 +133,13 @@ public:
         _sampleDataLen = sampleLengths[soundID];
     }
 
+    void playSoundSync(int soundID) {
+        playSound(soundID);
+        while(_sampleDataLen) {
+            update();
+        }
+    }
+
     void update() {
         int currentSample = RTC_SLOW_MEM[indexAddress] & 0xffff;
         int currentWord = currentSample >> 1;
@@ -170,7 +185,10 @@ public:
     void begin() {
     }
 
-    void playSound(const unsigned char* sampleDataPtr, unsigned int sampleDataLen) {
+    void playSound(int sample)) {
+    }
+
+    void playSoundSync(int sample) {
     }
 
     void update() {

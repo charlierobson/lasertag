@@ -83,13 +83,24 @@ void loop()
       break;
 
     case RUNNING:
-      if (gunTrigger->state() == 2) {
+      if (gunTrigger->state() == 1) {
         if (gameConfig.shotsRemaining != 0) {
           sfx->playSound(SFX_SHOT);
           gun->transmitShot(0);
           --gameConfig.shotsRemaining;
         } else {
           sfx->playSound(SFX_EMPTY);
+        }
+      }
+
+      if (reloadTrigger->state() == 3) {
+        if (gameConfig.clipsRemaining != 0) {
+          sfx->playSound(SFX_RELOAD);
+          gameConfig.shotsRemaining = gameConfig.CLIPSIZE;
+          -- gameConfig.clipsRemaining;
+        }
+        else {
+          sfx->playSound(SFX_NOPE);
         }
       }
 
