@@ -5,18 +5,20 @@
 //    black  GND
 //    brown  audio     25
 //      red  5v
-//   orange  ws2812    5
-//   yellow  IR rx     23
-//    green  rbutton   19
-//     blue  trigger   18
-//   purple  IR tx     26
+//   green  ws2812     19
+//   purple  IR rx     26
+//    white  rbutton   16
+//     grey  trigger   17
+//   orange  IR tx     5 
+//     blue  powerOn   18
 
 #ifdef ESP32
-#define PIN_TRIGGER 18
-#define PIN_RBUTTON 19
-#define PIN_IR_RECIEVER 23
-#define PIN_IR_TRANSMITTER 26
-#define PIN_NOTIFY_LED 13
+#define PIN_TRIGGER 17
+#define PIN_RBUTTON 16
+#define PIN_IR_RECIEVER 26
+#define PIN_IR_TRANSMITTER 5
+#define PIN_NOTIFY_LED 19
+#define PIN_POWER 18
 #else
 #define PIN_TRIGGER 4
 #define PIN_IR_RECIEVER 3
