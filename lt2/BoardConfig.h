@@ -2,15 +2,16 @@
 
 // wire col  signal    esp   ard
 // --------  ------    ---   ---
-//    black  GND
 //    brown  audio     25
+//    white  reload    16
+//   orange  IR tx     5
 //      red  5v
-//   green  ws2812     19
+//    black  GND
+//  (yellow  unused)
+//     blue  power on  18
+//    green  ws2812    19
 //   purple  IR rx     26
-//    white  rbutton   16
 //     grey  trigger   17
-//   orange  IR tx     5 
-//     blue  powerOn   18
 
 #ifdef ESP32
 #define PIN_TRIGGER 17
@@ -18,8 +19,7 @@
 #define PIN_IR_RECIEVER 26
 #define PIN_IR_TRANSMITTER 5
 #define PIN_NOTIFY_LED 19
-#define PIN_POWER 18
-#define PIN_HARD_ON 17
+#define PIN_HARD_ON 18
 #else
 #define PIN_TRIGGER 4
 #define PIN_IR_RECIEVER 3

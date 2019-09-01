@@ -7,8 +7,8 @@ unsigned int sampleLengths[8];
 #define SFX_EMPTY 1
 #define SFX_RELOAD 2
 #define SFX_NOPE 3
-#define SFX_HELLO 3
-#define SFX_SHUTTINGDOWN 3
+#define SFX_HELLO 4
+#define SFX_SHUTTINGDOWN 5
 
 #ifdef ESP32
 

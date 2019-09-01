@@ -28,13 +28,20 @@ void indicatorOn(unsigned int duration) {
 
 void setup()
 {
+  Serial.begin(115200);
+  delay(1000);
+  Serial.println("LASERTAG");
+
   gunTrigger = new Trigger(PIN_TRIGGER);
   reloadTrigger = new Trigger(PIN_RBUTTON);
 
-  // turn off the soft power switch and loop until the trigger is moved
+  // turn off the soft power switch and loop until the trigger is pulled
   pinMode(PIN_HARD_ON, OUTPUT);
   digitalWrite(PIN_HARD_ON, LOW);
-  while(gunTrigger->state() == 0) {
+
+  Serial.println("WAIT TRIGGER ON");
+
+  while(gunTrigger->state() == Trigger::NOTTRIGGERED) {
     delay(1);
     gunTrigger->update();
   }
@@ -49,6 +56,15 @@ void setup()
   sfx->playSoundSync(SFX_HELLO);
   sfx->flush();
 
+  Serial.println("WAIT TRIGGER OFF");
+
+  while(gunTrigger->state() == Trigger::HELD) {
+    delay(1);
+    gunTrigger->update();
+  }
+
+  Serial.println("OK");
+
   gun = new PlayerGun(PIN_IR_TRANSMITTER, gameConfig.TEAMID, gameConfig.PLAYERID);
 
   receiver = new Receiver(PIN_IR_RECIEVER);
@@ -57,10 +73,6 @@ void setup()
 
   pinMode(PIN_NOTIFY_LED, OUTPUT);
   digitalWrite(PIN_NOTIFY_LED, LOW);
-
-  Serial.begin(115200);
-  delay(1000);
-  Serial.println("LASERTAG");
 }
 
 
@@ -98,7 +110,7 @@ void loop()
       break;
 
     case RUNNING:
-      if (gunTrigger->state() == 1) {
+      if (gunTrigger->state() == Trigger::JUSTTRIGGERED) {
         if (gameConfig.shotsRemaining != 0) {
           sfx->playSound(SFX_SHOT);
           gun->transmitShot(0);
@@ -108,7 +120,7 @@ void loop()
         }
       }
 
-      if (reloadTrigger->state() == 3) {
+      if (reloadTrigger->state() == Trigger::JUSTTRIGGERED) {
         if (gameConfig.clipsRemaining != 0) {
           sfx->playSound(SFX_RELOAD);
           gameConfig.shotsRemaining = gameConfig.CLIPSIZE;
