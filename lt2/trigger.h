@@ -25,13 +25,28 @@ public:
     }
 
     void update() {
-        _shiftreg <<= 1;
-        _shiftreg |= digitalRead(_pinNum) ? 1 : 0;
+        int triggered = digitalRead(_pinNum) ? 1 : 0;
 
-        if (_shiftreg == 0xffff) _state = NOTTRIGGERED; 
-        else if (_shiftreg == 0x8000) _state = JUSTTRIGGERED;
-        else if (_shiftreg == 0x0000) _state = HELD;
-        else if (_shiftreg == 0x0001) _state = JUSTRELEASED;
+        _shiftreg <<= 1;
+        _shiftreg |= triggered;
+
+        switch(_state) {
+            case NOTTRIGGERED:
+                if (triggered == 0) _state = JUSTTRIGGERED;
+                break;
+            case JUSTTRIGGERED:
+                _state = HELD;
+                break;
+            case HELD:
+                if ((_shiftreg & 0xff) == 0xff) _state = NOTTRIGGERED;
+                break;
+        }
+
+        // _state = NOTTRIGGERED;
+        // int b4 = _shiftreg & 0xff;
+        // if (b4 == 0xfe) _state = JUSTTRIGGERED;
+        // else if (b4 == 0x00) _state = HELD;
+        // else if (b4 == 0x01) _state = JUSTRELEASED;
 
         if (_state == HELD) {
             if (_counts != 0xffff) {

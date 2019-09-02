@@ -83,7 +83,7 @@ void loop()
   while (millis() < nextUpdateTime) {
     sfx->update();
   }
-  nextUpdateTime += 5;
+  nextUpdateTime += 3;
 
   gunTrigger->update();
   reloadTrigger->update();
@@ -129,10 +129,10 @@ void loop()
         else {
           sfx->playSound(SFX_NOPE);
         }
-      }
+      } 
 
-      if (reloadTrigger->timeHeld() > 400) {
-        // 2000ms/5
+      // 2000ms/3
+      if (reloadTrigger->timeHeld() > 666) {
         sfx->playSoundSync(SFX_SHUTTINGDOWN);
         digitalWrite(PIN_HARD_ON, LOW);
       }

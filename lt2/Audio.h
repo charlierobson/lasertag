@@ -20,7 +20,7 @@ unsigned int sampleLengths[8];
 #include "sfx/sfx_shot.h"
 #include "sfx/sfx_empty.h"
 #include "sfx/sfx_reload.h"
-#include "sfx/sfx_beep.h"
+#include "sfx/sfx_nope.h"
 #include "sfx/sfx_hello.h"
 #include "sfx/sfx_shuttingdown.h"
 
@@ -38,8 +38,8 @@ public:
         sampleLengths[SFX_EMPTY] = empty_raw_len;
         samplePointers[SFX_RELOAD] = (unsigned char*)reload_raw;
         sampleLengths[SFX_RELOAD] = reload_raw_len;
-        samplePointers[SFX_NOPE] = (unsigned char*)beep_raw;
-        sampleLengths[SFX_NOPE] = beep_raw_len;
+        samplePointers[SFX_NOPE] = (unsigned char*)nope_raw;
+        sampleLengths[SFX_NOPE] = nope_raw_len;
         samplePointers[SFX_HELLO] = (unsigned char*)hello_raw;
         sampleLengths[SFX_HELLO] = hello_raw_len;
         samplePointers[SFX_SHUTTINGDOWN] = (unsigned char*)shuttingdown_raw;
