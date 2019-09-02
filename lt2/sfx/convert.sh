@@ -16,4 +16,5 @@ compile shot
 compile empty
 compile reload
 compile beep
+compile nope
 compile shuttingdown
