@@ -120,7 +120,7 @@ void loop()
         }
       }
 
-      if (reloadTrigger->state() == Trigger::JUSTTRIGGERED) {
+      if (reloadTrigger->state() == Trigger::JUSTRELEASED) {
         if (gameConfig.clipsRemaining != 0) {
           sfx->playSound(SFX_RELOAD);
           gameConfig.shotsRemaining = gameConfig.CLIPSIZE;
@@ -135,6 +135,11 @@ void loop()
       if (reloadTrigger->timeHeld() > 666) {
         sfx->playSoundSync(SFX_SHUTTINGDOWN);
         digitalWrite(PIN_HARD_ON, LOW);
+        while(reloadTrigger->state() == Trigger::HELD) {
+          delay(1);
+          sfx->update();
+          reloadTrigger->update();
+        };
       }
 
       receiver->update();
