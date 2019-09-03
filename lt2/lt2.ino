@@ -17,6 +17,8 @@ GameConfig gameConfig;
 #define PIN_IR_RECIEVER 3
 #define PIN_NOTIFY_LED 5
 
+// ir led on 11 for arduino
+
 unsigned long ledOffTime = 0;
 
 void indicatorOn(unsigned int duration) {
