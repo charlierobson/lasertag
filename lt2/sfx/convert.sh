@@ -18,3 +18,6 @@ compile reload
 compile beep
 compile nope
 compile shuttingdown
+compile ow
+compile oww
+compile owww

@@ -3,10 +3,8 @@
 #include "TimerMacros.h"
 #include "RingBuffer.h"
 
-// forward declarations
 
-extern void indicatorOn(unsigned int duration);
-
+// pointer to receiver instance used by ISR
 class Receiver* iamReceiver;
 void irIsr();
 
@@ -18,7 +16,8 @@ class Receiver
   public:
     Receiver(int receiverPin) :
       _receiverPin(receiverPin) {
-      _ringBuffer = new RingBuffer();
+        pinMode(receiverPin, INPUT_PULLUP);
+        _ringBuffer = new RingBuffer();
     }
 
     void begin() {
@@ -45,11 +44,10 @@ class Receiver
         Serial.print(player, DEC);
         Serial.print(" of team ");
         Serial.println(team, DEC);
-
-        indicatorOn(250);
+        return true;
       }
 
-      return true;
+      return false;
     }
 
     void handleInterrupt() {

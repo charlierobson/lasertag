@@ -1,3 +1,18 @@
+/* TODO
+
+receiver
+status led
+
+reset
+
+white-blue
+black-grey
+red-green
+yellow-purple
+
+*/
+
+
 
 // go here to change the setup for the game/gun you're compiling for
 #include "GameConfig.h"
@@ -28,46 +43,47 @@ void indicatorOn(unsigned int duration) {
 
 void setup()
 {
+  // make sure hardware is initialised as soon as poss.
+  //
+  gun = new PlayerGun(PIN_IR_TRANSMITTER, gameConfig.TEAMID, gameConfig.PLAYERID);
+  receiver = new Receiver(PIN_IR_RECIEVER);
+  gunTrigger = new Trigger(PIN_TRIGGER);
+  reloadTrigger = new Trigger(PIN_RBUTTON);
+
   Serial.begin(115200);
   delay(1000);
   Serial.println("LASERTAG");
 
-  gunTrigger = new Trigger(PIN_TRIGGER);
-  reloadTrigger = new Trigger(PIN_RBUTTON);
-
-  // turn off the soft power switch and loop until the trigger is pulled
+  // turn off the soft (hard?) power switch and loop until the trigger is pulled
+  //
   pinMode(PIN_HARD_ON, OUTPUT);
   digitalWrite(PIN_HARD_ON, LOW);
-
-  Serial.println("WAIT TRIGGER ON");
 
   while(gunTrigger->state() == Trigger::NOTTRIGGERED) {
     delay(1);
     gunTrigger->update();
+    reloadTrigger->update();
   }
 
-  // hold the power on
+  // turn on the power
+  // play the welcome sound then flush the audio buffer to ensure there's no glitch
+  //
   digitalWrite(PIN_HARD_ON, HIGH);
 
   sfx = new SFX();
   sfx->begin();
-
-  // play the welcome sound then flush the audio buffer to ensure there's no glitch
   sfx->playSoundSync(SFX_HELLO);
   sfx->flush();
 
-  Serial.println("WAIT TRIGGER OFF");
-
-  while(gunTrigger->state() == Trigger::HELD) {
+  // wait for the triggers to be released before proceeding
+  //
+  while(gunTrigger->state() == Trigger::HELD || reloadTrigger->state() == Trigger::HELD) {
     delay(1);
     gunTrigger->update();
+    reloadTrigger->update();
   }
 
-  Serial.println("OK");
-
-  gun = new PlayerGun(PIN_IR_TRANSMITTER, gameConfig.TEAMID, gameConfig.PLAYERID);
-
-  receiver = new Receiver(PIN_IR_RECIEVER);
+  Serial.println("OK READY LET'S DO IT");
 
   gameConfig.state = RESETTING;
 
@@ -111,7 +127,7 @@ void loop()
 
     case RUNNING:
       if (gunTrigger->state() == Trigger::JUSTTRIGGERED) {
-        if (gameConfig.shotsRemaining != 0) {
+        if (gameConfig.shotsRemaining != 999) {
           sfx->playSound(SFX_SHOT);
           gun->transmitShot(0);
           --gameConfig.shotsRemaining;
@@ -127,7 +143,7 @@ void loop()
           -- gameConfig.clipsRemaining;
         }
         else {
-          sfx->playSound(SFX_NOPE);
+          sfx->playSound(SFX_EMPTY);
         }
       } 
 
@@ -144,7 +160,8 @@ void loop()
 
       receiver->update();
       if (receiver->detectedHit()) {
-        --gameConfig.lives;
+       // --gameConfig.lives;
+        sfx->playSound(SFX_OW1+random(3));
         if (!gameConfig.lives) {
           gameConfig.state = OVER;
         }

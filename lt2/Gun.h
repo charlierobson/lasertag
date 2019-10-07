@@ -10,6 +10,8 @@ class Gun
       _irLEDPin(irLEDPin)
     {
       createShotBitstream(SHOT, (team & 3) << 4 | player & 15, _shotBits);
+      pinMode(_irLEDPin, OUTPUT);
+      digitalWrite(_irLEDPin, LOW);
     }
 
     void begin() {

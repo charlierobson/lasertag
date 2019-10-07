@@ -1,7 +1,7 @@
 #pragma once
 
-unsigned char* samplePointers[8];
-unsigned int sampleLengths[8];
+unsigned char* samplePointers[9];
+unsigned int sampleLengths[9];
 
 #define SFX_SHOT 0
 #define SFX_EMPTY 1
@@ -9,6 +9,9 @@ unsigned int sampleLengths[8];
 #define SFX_NOPE 3
 #define SFX_HELLO 4
 #define SFX_SHUTTINGDOWN 5
+#define SFX_OW1 6
+#define SFX_OW2 7
+#define SFX_OW3 8
 
 #ifdef ESP32
 
@@ -23,6 +26,9 @@ unsigned int sampleLengths[8];
 #include "sfx/sfx_nope.h"
 #include "sfx/sfx_hello.h"
 #include "sfx/sfx_shuttingdown.h"
+#include "sfx/sfx_ow.h"
+#include "sfx/sfx_oww.h"
+#include "sfx/sfx_owww.h"
 
 // THANKS BITLUNI!
 // https://github.com/bitluni/ULPSoundESP32/tree/master/ULPSoundMonoSamples
@@ -44,6 +50,12 @@ public:
         sampleLengths[SFX_HELLO] = hello_raw_len;
         samplePointers[SFX_SHUTTINGDOWN] = (unsigned char*)shuttingdown_raw;
         sampleLengths[SFX_SHUTTINGDOWN] = shuttingdown_raw_len;
+        samplePointers[SFX_OW1] = (unsigned char*)ow_raw;
+        sampleLengths[SFX_OW1] = ow_raw_len;
+        samplePointers[SFX_OW2] = (unsigned char*)oww_raw;
+        sampleLengths[SFX_OW2] = oww_raw_len;
+        samplePointers[SFX_OW3] = (unsigned char*)owww_raw;
+        sampleLengths[SFX_OW3] = owww_raw_len;
     }
 
     void begin() {
