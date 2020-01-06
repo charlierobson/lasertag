@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function compile {
-  ffmpeg -nostats -loglevel 0 -y -i $1.mp3 -ar 22050 -ac 1 -f u8 -acodec pcm_u8 $1.raw
+  ffmpeg -nostats -loglevel 0 -y -i $1.mp3 -ar 22050 -ac 1 -f s8 -acodec pcm_s8 $1.raw
 
   echo -n -e "const " >sfx_$1.h
   xxd -i $1.raw >>sfx_$1.h
